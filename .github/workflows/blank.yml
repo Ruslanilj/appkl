@@ -30,13 +30,13 @@ jobs:
           # Replace `main.py` with the entry point to your application.
           # The -F flag creates a single executable, -w removes the console
           # window and -n sets the name of the bundle.
-          pyinstaller -F -w -n BKbox BKbox.py  # Change `main.py` to your script file name
+          pyinstaller -F -w -n BKbox main.py  # Change `main.py` to your script file name
           cd dist
           # Zip the generated .app bundle so it can be stored as an artifact.
           zip -r9 BKbox BKbox.app/
 
       - name: Upload built app
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2  # Updated to v2
         with:
           name: BKbox-macos
           path: dist/BKbox.zip  # Path to the zip file created in the build step
