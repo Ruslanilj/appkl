@@ -1,0 +1,42 @@
+name: Build macOS app
+
+on:
+  # Trigger the workflow whenever changes are pushed to the `main` branch.
+  push:
+    branches: [ "main" ]
+  # Allow manual invocation of this workflow from the GitHub UI.
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest  # Use the macOS runner for building the app
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"  # You can change this to the version you're using
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller beautifulsoup4  # Add any other dependencies if needed
+
+      - name: Build macOS application
+        run: |
+          # Replace `main.py` with the entry point to your application.
+          # The -F flag creates a single executable, -w removes the console
+          # window and -n sets the name of the bundle.
+          pyinstaller -F -w -n BKbox BKbox.py  # Change `main.py` to your script file name
+          cd dist
+          # Zip the generated .app bundle so it can be stored as an artifact.
+          zip -r9 BKbox BKbox.app/
+
+      - name: Upload built app
+        uses: actions/upload-artifact@v3
+        with:
+          name: BKbox-macos
+          path: dist/BKbox.zip  # Path to the zip file created in the build step
